@@ -1,12 +1,14 @@
 <script setup lang="ts">
 
-import HelloWorld from './components/HelloWorld.vue'
 import { PersonAddSharp } from '@vicons/material'
 import { NButton, NIcon } from 'naive-ui'
+import { ref } from 'vue'
+import { useFetch } from './store/store';
 
 const addContact = () => {
     console.log('add contact')
 }
+
 </script>
 
 <template>

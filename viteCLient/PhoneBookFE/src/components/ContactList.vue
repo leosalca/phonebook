@@ -3,18 +3,18 @@ import { defineComponent, ref } from 'vue'
 import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace } from 'naive-ui'
 import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled } from '@vicons/material'
 import Contact from '../types/Contact'
+import { useFetch } from '../store/store'
 
-const contacts = ref<Contact[]>([
-    { name: 'John Doe', phone: '1234567890', email: 'test' },
-    { name: 'Maria Heart', phone: '1234567890', email: 'test' },
-    { name: 'Elvia Rocio', phone: '1234567890', email: 'test' },
-])
+const { data, error } = useFetch('https://jsonplaceholder.typicode.com/users')
+
+
+const contacts = data
 
 export default defineComponent({
     name: 'ContactList',
     setup() {
         const addContact = () => {
-            contacts.value.push({ name: 'New Contact', phone: '123456789', email: 'test', address: 'test' })
+            
         }
 
         const addedContacts = ref<[]>([]);
