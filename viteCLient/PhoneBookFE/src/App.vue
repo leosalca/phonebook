@@ -4,13 +4,15 @@ import HelloWorld from './components/HelloWorld.vue'
 import { PersonAddSharp } from '@vicons/material'
 import { NButton, NIcon } from 'naive-ui'
 
-
+const addContact = () => {
+    console.log('add contact')
+}
 </script>
 
 <template>
   <nav class="navigation">
     <router-link to="/">Contacts</router-link>
-    <n-button class="addButton" circle ghost>
+    <n-button class="addButton" circle ghost @click="addContact()">
       <template #icon>
         <n-icon><PersonAddSharp/></n-icon>
       </template>

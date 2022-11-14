@@ -14,7 +14,7 @@ export default defineComponent({
     name: 'ContactList',
     setup() {
         const addContact = () => {
-            contacts.value.push({ name: 'New Contact', phone: '123456789', email: 'test' })
+            contacts.value.push({ name: 'New Contact', phone: '123456789', email: 'test', address: 'test' })
         }
 
         const addedContacts = ref<[]>([]);
