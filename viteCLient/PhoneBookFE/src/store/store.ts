@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import Contact from '../types/Contact'
+import type { Contact } from '../types/contact'
 
 export function useFetch(url: string) {
     const data = ref<Contact[]>([])

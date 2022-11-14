@@ -2,7 +2,6 @@
 import { defineComponent, ref } from 'vue'
 import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace } from 'naive-ui'
 import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled } from '@vicons/material'
-import Contact from '../types/Contact'
 import { useFetch } from '../store/store'
 
 const { data, error } = useFetch('https://jsonplaceholder.typicode.com/users')

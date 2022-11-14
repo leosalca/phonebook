@@ -4,6 +4,8 @@ interface Contact {
     phone?: string;
     email?: string;
     address?: string;
+    company?: string;
+    notes?: string;
 }
 
-export default Contact;
+export type { Contact };
