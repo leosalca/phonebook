@@ -2,12 +2,11 @@
 
 import HelloWorld from './components/HelloWorld.vue'
 
+
 </script>
 
 <template>
-  <nav>
-  <RouterLink to="/home">Home</RouterLink>
-  </nav>
+  <router-link to="/home">Home</router-link>
   <router-view/>
 </template>
 
