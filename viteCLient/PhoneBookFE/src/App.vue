@@ -1,12 +1,21 @@
 <script setup lang="ts">
 
 import HelloWorld from './components/HelloWorld.vue'
+import { PersonAddSharp } from '@vicons/material'
+import { NButton, NIcon } from 'naive-ui'
 
 
 </script>
 
 <template>
-  <router-link to="/home">Home</router-link>
+  <nav class="navigation">
+    <router-link to="/">Contacts</router-link>
+    <n-button class="addButton" circle ghost>
+      <template #icon>
+        <n-icon><PersonAddSharp/></n-icon>
+      </template>
+    </n-button>
+  </nav>
   <router-view/>
 </template>
 
