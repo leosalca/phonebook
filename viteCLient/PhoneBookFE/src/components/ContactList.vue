@@ -4,10 +4,11 @@ import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace } from 'naiv
 import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled } from '@vicons/material'
 import { useFetch } from '../store/store'
 
-const { data, error } = useFetch('https://jsonplaceholder.typicode.com/users')
+const { data, error } = useFetch('http://127.0.0.1:5000/getcontacts')
 
 
 const contacts = data
+console.log(contacts)
 
 export default defineComponent({
     name: 'ContactList',
@@ -44,7 +45,7 @@ export default defineComponent({
 
 
 <template :contacts="contacts" :addedContacts="addedContacts">
-    <n-list clickable v-for="contact in contacts">
+    <n-list clickable v-for="contact in contacts" class="contactList">
         <n-list-item :key="contact.name">
             <n-thing content-intended class="contactItem">
                 <template #avatar>
@@ -58,7 +59,7 @@ export default defineComponent({
                     {{ contact.name }}
                 </template>
                 <template #description>
-                    Description
+                    {{ contact?.company?.name }}
                 </template>
                 <n-divider />
                     <n-space>
@@ -77,7 +78,10 @@ export default defineComponent({
                         <n-icon>
                             <house-filled />
                         </n-icon>
-                        {{ contact.address }}
+                        {{ contact?.address?.street }}
+                        {{ contact?.address?.city }}
+                        {{ contact?.address?.state }}
+                        {{ contact?.address?.zipcode }}
                     </n-space>
             </n-thing>
         </n-list-item>

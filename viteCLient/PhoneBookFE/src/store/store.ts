@@ -6,20 +6,10 @@ export function useFetch(url: string) {
     const error = ref(null)
     
     fetch(url)
-        .then(res => {
-            if (!res.ok) {
-                throw Error('Could not fetch the data for that resource')
-            }
-            return res.json()
-        })
-        .then((res) => {
-            data.value = res
-            error.value = null
-        })
-        .catch(err => {
-            console.log(err.message)
-            error.value = err.message
-        })
+        .then(res => res.json())
+        .then(res => data.value = res.contacts)
+        .catch(err => error.value = err)
+
 
     return { data, error }
 }
