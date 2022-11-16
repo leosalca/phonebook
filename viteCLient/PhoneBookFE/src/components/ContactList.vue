@@ -4,12 +4,6 @@ import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace } from 'naiv
 import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled } from '@vicons/material'
 import { useFetch } from '../store/store'
 
-const { data, error } = useFetch('http://127.0.0.1:5000/getcontacts')
-
-
-const contacts = data
-console.log(contacts)
-
 export default defineComponent({
     name: 'ContactList',
     setup() {
@@ -17,10 +11,10 @@ export default defineComponent({
             
         }
 
-        const addedContacts = ref<[]>([]);
-
+        const { contacts, error } = useFetch('http://127.0.0.1:5000/getcontacts')
+        
         return {
-            contacts, addContact, addedContacts
+            contacts, addContact
         }
     },
     props: {
