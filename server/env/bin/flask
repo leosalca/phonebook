@@ -1,4 +1,4 @@
-#!/Users/leosalca/Documents/codingProjects/PhoneBook/server/env/bin/python3.9
+#!/Users/leosalca/Documents/codingProjects/PhoneBook/server/env/bin/python3.10
 # -*- coding: utf-8 -*-
 import re
 import sys
