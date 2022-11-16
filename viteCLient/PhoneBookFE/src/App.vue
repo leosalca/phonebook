@@ -1,25 +1,9 @@
 <script setup lang="ts">
-
-import { PersonAddSharp } from '@vicons/material'
-import { NButton, NIcon } from 'naive-ui'
-import { ref } from 'vue'
-import { useFetch } from './store/store';
-
-const addContact = () => {
-    console.log('add contact')
-}
-
+import NavBar from './components/NavBar.vue'
 </script>
 
 <template>
-  <nav class="navigation">
-    <router-link to="/">Contacts</router-link>
-    <n-button class="addButton" circle ghost @click="addContact()">
-      <template #icon>
-        <n-icon><PersonAddSharp/></n-icon>
-      </template>
-    </n-button>
-  </nav>
+  <NavBar />
   <router-view/>
 </template>
 

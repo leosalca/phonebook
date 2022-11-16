@@ -30,6 +30,10 @@
   color: #36ad6a
 }
 
+.n-form-item-label .formLabel {
+  color: #f9f9f9;
+}
+
 
 .contactItem {
   border : 1px solid #535bf2;
