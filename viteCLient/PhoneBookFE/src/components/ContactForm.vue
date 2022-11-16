@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { NButton, NForm, NFormItem, NInput, NSelect, NDatePicker, NTimePicker, NInputNumber, NCheckbox, NCheckboxGroup, NRadio, NRadioGroup, NRate, NSwitch, NSlider, NUpload, NDivider, NSpace, NCard, NAvatar, NIcon, NList, NListItem, NThing } from 'naive-ui'
+import { NButton, NForm, NFormItem, NInput } from 'naive-ui'
+import { FormInst, FormItemInst, FormItemRule, FormValidationError, FormRules } from 'naive-ui'
+import CFBaseInputVue from './CFBaseInput.vue'
 
 export default defineComponent({
     name: 'ContactForm',
@@ -16,93 +18,114 @@ export default defineComponent({
         const country = ref('')
         const notes = ref('')
 
-        const addContact = () => {
-            console.log(name.value)
-        }
-
+        const formRef = ref<FormInst | null>(null)
         return {
-            name, email, phone, company, address, city, state, zip, country, notes, addContact
+            formRef,
+            formValue: ref({
+                name: '',
+                email: '',
+                phone: '',
+                company: '',
+                address: '',
+                city: '',
+                state: '',
+                zip: '',
+                country: '',
+                notes: ''
+            }),
+            rules: {
+                name: [
+                    {
+                        required: true,
+                        message: 'Name is required'
+                    }
+                ],
+                email: [
+                    {
+                        required: true,
+                        message: 'Email is required'
+                    }
+                ],
+                phone: [
+                    {
+                        required: true,
+                        message: 'Phone is required'
+                    }
+                ],
+                company: [
+                    {
+                        required: true,
+                        message: 'Company is required'
+                    }
+                ],
+                address: [
+                    {
+                        required: true,
+                        message: 'Address is required'
+                    }
+                ],
+                city: [
+                    {
+                        required: true,
+                        message: 'City is required'
+                    }
+                ],
+                state: [
+                    {
+                        required: true,
+                        message: 'State is required'
+                    }
+                ],
+                zip: [
+                    {
+                        required: true,
+                        message: 'Zip is required'
+                    }
+                ],
+                country: [
+                    {
+                        required: true,
+                        message: 'Country is required'
+                    }
+                ],
+                notes: [
+                    {
+                        required: true,
+                        message: 'Notes is required'
+                    }
+                ]
+            },
+            
+            handleAddContact() {
+                
+                console.log(formRef.value)
+            },
+            events: {
+                'onUpdate:modelValue': (value: string) => {
+                    console.log(value)
+                }
+            },
+            
         }
-    },
-    props: {
-        name: String,
-        email: String,
-        phone: String,
-        company: String,
-        address: String,
-        city: String,
-        state: String,
-        zip: String,
-        country: String,
-        notes: String
     },
     components: {
-        NButton,
-        NForm,
-        NFormItem,
-        NInput,
-        NSelect,
-        NDatePicker,
-        NTimePicker,
-        NInputNumber,
-        NCheckbox,
-        NCheckboxGroup,
-        NRadio,
-        NRadioGroup,
-        NRate,
-        NSwitch,
-        NSlider,
-        NUpload,
-        NDivider,
-        NSpace,
-        NCard,
-        NAvatar,
-        NIcon,
-        NList,
-        NListItem,
-        NThing,
+        CFBaseInputVue,
     }
+    
 })
 </script>
 
 <template>
     <!-- make me a vue form component -->
     <div class="contactForm">
-        <n-form>
-            <n-form-item label="Name" class="formLabel">
-                <n-input v-model:value="name" />
-            </n-form-item>
-            <n-form-item label="Email" class="formLabel">
-                <n-input v-model:value="email" />
-            </n-form-item>
-            <n-form-item label="Phone" class="formLabel">
-                <n-input v-model:value="phone" />
-            </n-form-item>
-            <n-form-item label="Company" class="formLabel">
-                <n-input v-model:value="company" />
-            </n-form-item>
-            <n-form-item label="Address" class="formLabel">
-                <n-input v-model:value="address" />
-            </n-form-item>
-            <n-form-item label="City" class="formLabel">
-                <n-input v-model:value="city" />
-            </n-form-item>
-            <n-form-item label="State" class="formLabel">
-                <n-input v-model:value="state" />
-            </n-form-item>
-            <n-form-item label="Zip" class="formLabel">
-                <n-input v-model:value="zip" />
-            </n-form-item>
-            <n-form-item label="Country" class="formLabel">
-                <n-input v-model:value="country" />
-            </n-form-item>
-            <n-form-item label="Notes" class="formLabel">
-                <n-input v-model:value="notes" />
-            </n-form-item>
-            <n-form-item>
-                <n-button type="primary" @click="addContact">Add Contact</n-button>
-            </n-form-item>
-        </n-form>
+        <CFBaseInputVue
+            label="Name"
+            v-model="formValue.name"
+            type="text"
+        />
+        <pre>
+            {{ formValue }}
+        </pre>
     </div>
 </template>
 
