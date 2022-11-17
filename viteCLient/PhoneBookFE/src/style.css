@@ -23,15 +23,48 @@
   height: 3rem;
   background-color: #535bf2;
 }
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #535bf2;
+  border-radius: 5px;
+}
+
+.baseInput {
+  padding: 0.5rem;
+  width: 80%;
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+}
+.baseInput input {
+  padding: 0.5rem;
+  margin: 0.5rem 0.5rem;
+  border: 1px solid #535bf2;
+  border-radius: 0.25rem;
+  background-color: #f9f9f9;
+  color: #213547;
+}
+.baseInput label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f9f9f9;
+}
+
+.errorMsg {
+  color: red;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 4rem;
+}
+
 .addButton {
   color: white;
 }
 .addButton:hover {
   color: #36ad6a
-}
-
-.n-form-item-label .formLabel {
-  color: #f9f9f9;
 }
 
 

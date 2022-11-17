@@ -2,7 +2,7 @@
 import { defineComponent, ref } from 'vue'
 import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace } from 'naive-ui'
 import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled } from '@vicons/material'
-import { useFetch } from '../store/store'
+import { useFetchContacts } from '../store/store'
 
 export default defineComponent({
     name: 'ContactList',
@@ -11,7 +11,7 @@ export default defineComponent({
             
         }
         
-        const { contacts, error } = useFetch('http://127.0.0.1:5000/getcontacts')
+        const { contacts, error } = useFetchContacts('http://127.0.0.1:5000/getcontacts')
         
         return {
             contacts, addContact

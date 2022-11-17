@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import type { Contact } from '../types/contact'
 
-export function useFetch(url: string) {
+export function useFetchContacts(url: string) {
     const contacts = ref<Contact[]>([])
     const error = ref(null)
 
