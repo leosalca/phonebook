@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, ref, defineEmits } from 'vue'
 import { NForm, NFormItem, NInput } from 'naive-ui'
-import { Contact, Address } from '../types/Contact'
+import { Contact, Address } from '../types/contact'
 
 
 

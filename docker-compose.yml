@@ -1,0 +1,12 @@
+version: "0.0.1.RELEASE"
+services:
+  phonebookfe:
+    image: phonebookfe
+    ports:
+      - 3000:3000
+    depends_on:
+      - phonebookbe
+  phonebookbe:
+    image: phonebookbe
+    ports:
+      - 5000:5000

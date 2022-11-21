@@ -2,24 +2,26 @@
 import { defineComponent, ref } from 'vue'
 import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace } from 'naive-ui'
 import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled } from '@vicons/material'
-import { useFetchContacts } from '../store/store'
+import { Contact } from '../types/contact'
+import { useFetchContacts } from '../composables/useFetchContacts'
+import { useContactStore } from '../stores/useContactStore'
 
 export default defineComponent({
     name: 'ContactList',
     setup() {
-        const addContact = () => {
-            
-        }
-        
-        const { contacts, error } = useFetchContacts('http://127.0.0.1:5000/getcontacts')
+
+        const store = useContactStore()
+
+        fetch('http://127.0.0.1:5000/getcontacts')
+            .then(res => res.json())
+            .then(data => {
+                store.setContacts(data)
+                console.log(data)
+            })
         
         return {
-            contacts, addContact
+            store
         }
-    },
-    props: {
-        contacts: Array,
-        addedContacts: Array
     },
     components: {
         NList,
@@ -38,10 +40,9 @@ export default defineComponent({
 })
 </script>
 
-
-<template :contacts="contacts" :addedContacts="addedContacts">
-    <n-list clickable v-for="contact in contacts" class="contactList">
-        <n-list-item :key="contact.name">
+<template>
+    <n-list  clickable class="contactList">
+        <n-list-item key="listID++" clickable v-for="contact in store.contacts">
             <n-thing content-intended class="contactItem">
                 <template #avatar>
                     <n-avatar>
@@ -54,7 +55,7 @@ export default defineComponent({
                     {{ contact.name }}
                 </template>
                 <template #description>
-                    {{ contact?.company?.name }}
+                    {{ contact?.company }}
                 </template>
                 <n-divider />
                     <n-space>

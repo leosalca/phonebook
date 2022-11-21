@@ -1,10 +1,11 @@
 import { ref } from 'vue'
 import type { Contact } from '../types/contact'
 
-export function useFetchContacts(url: string) {
-    const contacts = ref<Contact[]>([])
+export function useFetchContacts(url: string | null) {
+    let contacts = ref<Contact[]>([])
     const error = ref(null)
 
+    if (url !== null) {
     fetch(url)
         .then(res => {
             if (!res.ok) {
@@ -16,5 +17,7 @@ export function useFetchContacts(url: string) {
             contacts.value = data
             error.value = null
         })
+    }
     return { contacts, error }
 }
+
