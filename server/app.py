@@ -1,13 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
-
+import json as JSON
+import xml.etree.ElementTree as ET
+import urllib.request
 
 # configuration
 DEBUG = True
 
-# instantiate the app, attach mongo
-# MongoDB PW
+# instantiate the app, attach mongo URI to config. MongoDB PW needs to be in .env file
 mdbPW = 'sagRyz-nizqu1-metzuw'
 app = Flask(__name__)
 app.config['MONGO_URI'] = 'mongodb+srv://leosalca:' + mdbPW + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority'
@@ -18,7 +19,7 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 # Load MongoDB
 mongo = PyMongo(app)
 
-# Format contacts
+# Format contacts function used in multiple routes
 def formatContact(contact):
         return {            
             'name': contact['name'],
@@ -27,6 +28,13 @@ def formatContact(contact):
             'address': contact['address'],
             'company': contact['company']
         }
+
+#XML USPS root
+uspsRoot = ET.Element('CityStateLookupRequest', {'USERID': '249LSCDE3365'})
+zipXML = ET.SubElement(uspsRoot, 'ZipCode')
+zip5 = ET.SubElement(zipXML, 'Zip5')
+zipTree = ET.ElementTree(uspsRoot)
+
 
 # sanity check route
 @app.route('/ping', methods=['GET'])
@@ -74,10 +82,29 @@ def updatecontact():
     return jsonify(list(formatContactList))
 
 @app.route('/verifyzip', methods=['POST'])
-def verifyZip():
+def verifyzip():
     zip = request.json['zip']
-    print(zip)
-    return jsonify(zip)
+    zip5.text = zip
+    # verify xml in console
+    ET.dump(zipTree)
+    # parse XML data to URL string
+    docString = urllib.parse.quote(ET.tostring(zipTree.getroot()))
+   
+    #request to USPS
+    with urllib.request.urlopen('http://production.shippingapis.com/ShippingAPI.dll?API=CityStateLookup&XML=' + docString) as response:
+        xmlData = response.read()
+        print(xmlData)
+        root = ET.fromstring(xmlData)
+        if response.status == 200:
+            for address in root.findall('ZipCode'):
+                if address.find('Error') is None:
+                    return jsonify({'city': address.find('City').text, 'state': address.find('State').text})
+                else:
+                    #extract error message
+                    return jsonify({'error': address.findall('Error')[0].find('Description').text})
+                    
+        else:
+            return jsonify({'error': 'Invalid Zip Code'})
 
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ import { defineComponent, ref, computed } from 'vue'
 import CFBaseInputVue from './CFBaseInput.vue'
 import { useVuelidate } from '@vuelidate/core'
 import { useFetchContacts } from '../composables/useFetchContacts'
-import { required, minLength, email } from '@vuelidate/validators'
+import { required, minLength, email, requiredIf, helpers } from '@vuelidate/validators'
 import { Contact } from '../types/contact'
 import {  useRouter } from 'vue-router'
 import { onMounted } from 'vue'
@@ -33,11 +33,13 @@ export default defineComponent({
             },
             notes: ''
         })
+        
+        const uspsVerification = ref(false)
 
         const rules = computed(() => ({
             name: {
                 required,
-                minLength: minLength(2)
+                minLength: minLength(2), //add a custom message
             },
             email: {
                 email
@@ -60,6 +62,7 @@ export default defineComponent({
                     required
                 },
                 zip: {
+                    minLength: minLength(5),
                     required
                 },
                 country: {
@@ -80,23 +83,31 @@ export default defineComponent({
             const jsonData = JSON.stringify(FormData)
             console.log(jsonData)
             const isFormCorrect = await v$.value.$validate()
+            const isUSPSValid = uspsVerification.value
             console.log(v$.value)
             if (isFormCorrect) {
                 console.log('Form is valid')
+                
                 // Submit form to backend
-                fetch("http://127.0.0.1:5000/addcontact", {
+                if (isUSPSValid) {
+                    fetch("http://127.0.0.1:5000/addcontact", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
 
                     },
                     body: jsonData
-                })
-                .then(response => response.json())
-                .then(data => {                    
-                    console.log('Response from backend after post', data)
-                    store.setContacts(data)
-                })
+                    })
+                    .then(response => response.json())
+                    .then(data => {                    
+                        console.log('Response from backend after post', data)
+                        store.setContacts(data)
+                    })
+                } else {
+                    console.log('USPS verification failed')
+                    alert('USPS verification failed, pleasy try again')
+                    return
+                }
                 
 
             } else {
@@ -106,6 +117,7 @@ export default defineComponent({
             }
             await router.push('/')
         }
+
         const verifyWithUsps = async (zip: String) => {
             console.log('Verify with USPS')
             console.log(zip)
@@ -117,13 +129,23 @@ export default defineComponent({
                 },
                 body: JSON.stringify({zip: zip})
             })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Response from backend after post', data, uspsVerification)
+                if (data.city){
+                    uspsVerification.value = true
+                }
+                formValue.value.address.city = data.city
+                formValue.value.address.state = data.state
+            })
         }
 
         return {
             onSubmit,
             verifyWithUsps,
             formValue,
-            v$
+            v$,
+            uspsVerification
         }
     },
     components: {
@@ -191,17 +213,20 @@ export default defineComponent({
         />
         <div v-if="v$.address.state.$error" class="errorMsg">State field has an error</div>
 
-        <div>
+        <div class="zipContainer">
             <CFBaseInputVue
             label="Zip"
             v-model="formValue.address.zip"
             type="text"
             @blur="v$.address.zip.$touch()"
             />
-            <button class="verifyButton" @click.prevent="verifyWithUsps(formValue.address.zip)">Verify</button>
+            <button v-if="v$.address.zip.$error === false && v$.address.zip.$dirty" class="verifyButton" @click.prevent="verifyWithUsps(formValue.address.zip)">Verify</button>
         </div>
-        <div v-if="v$.address.zip.$error" class="errorMsg">Zip field has an error</div>
-
+        <div v-if="v$.address.zip.$error" class="errorMsg" v-for="error of v$.address.zip.$errors" :key="error.$uid">
+            {{error.$message}}
+            <div v-if="!uspsVerification" class="verMsg">Once typed, please verify zipcode with USPS</div>
+        </div>
+        <div v-if="uspsVerification" class="verMsg">Zipcode verified with USPS</div>
         <CFBaseInputVue
             label="Country"
             v-model="formValue.address.country"
@@ -220,10 +245,6 @@ export default defineComponent({
 
         <button type="submit">Submit</button>
     </form>
-    
-    <pre>
-        {{ formValue }}
-    </pre>
 </template>
 
 <style scoped>
@@ -231,13 +252,13 @@ export default defineComponent({
     background-color: #4CAF50; /* Green */
     border: none;
     color: white;
-    padding: 5px 10px;
     text-align: center;
     text-decoration: none;
-    display: inline-block;
     font-size: 16px;
-    margin: 4px 2px;
+    margin: 0.5rem;
     cursor: pointer;
+    height: 35px;
+    align-self: flex-end;
 }
 
 .contactForm {
@@ -246,6 +267,15 @@ export default defineComponent({
     justify-content: center;
     width: 80%;
     margin: 0 auto;
-
 }
+
+.zipContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    align-self: center;
+    margin: 0.5rem 0.5rem;
+}
+ 
 </style>
