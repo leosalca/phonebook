@@ -1,10 +1,10 @@
 interface Contact {
-    id?: number;
+    id?: string;
     name?: string;
     phone?: string;
     email?: string;
     address?: Address;
-    company?: Company;
+    company?: string;
     notes?: string;
 }
 
@@ -12,12 +12,10 @@ interface Address {
     street?: string;
     city?: string;
     state?: string;
-    zipcode?: string | number;
+    zipcode?: string;
+    country?: string;
 }
 
-interface Company {
-    name?: string;
-    address?: Address;
-}
+
 
 export type { Contact, Address };

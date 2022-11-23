@@ -1,5 +1,4 @@
 <template>
-
     <div class="baseInput">
         <label>{{ label }}</label>
         <input
@@ -14,10 +13,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, defineEmits } from 'vue'
-import { NForm, NFormItem, NInput } from 'naive-ui'
-import { Contact, Address } from '../types/Contact'
-
-
 
 export default defineComponent({
     props: {
@@ -33,12 +28,6 @@ export default defineComponent({
             type: Array,
         }
     },
-    components: {
-        
-    },
-    methods: {
-        
-    }
 })
 </script>
 

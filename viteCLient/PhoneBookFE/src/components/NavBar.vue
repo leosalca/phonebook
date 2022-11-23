@@ -3,13 +3,19 @@ import { defineComponent, ref } from 'vue'
 import { PersonAddSharp } from '@vicons/material'
 import { NButton, NIcon } from 'naive-ui'
 import {  useRouter } from 'vue-router'
+import { useContactStore } from '../stores/useContactStore'
 
 
 export default defineComponent({
     name: 'NavBar',
     setup() {
         const router = useRouter()
+
+        const store = useContactStore()
+
         const handleAddContact = async () => {
+            store.clearEditContact()
+            store.setFormMode('add')
             await router.push('/add')
 
         }
