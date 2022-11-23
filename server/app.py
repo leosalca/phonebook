@@ -4,6 +4,7 @@ from flask_pymongo import PyMongo
 import json as JSON
 import xml.etree.ElementTree as ET
 import urllib.request
+from bson.objectid import ObjectId
 
 # configuration
 DEBUG = True
@@ -21,7 +22,8 @@ mongo = PyMongo(app)
 
 # Format contacts function used in multiple routes
 def formatContact(contact):
-        return {            
+        return {
+            'id': str(contact['_id']),
             'name': contact['name'],
             'phone': contact['phone'],
             'email': contact['email'],
@@ -54,8 +56,7 @@ def addcontact():
     company = request.json['company']
     email = request.json['email']
     address = request.json['address']
-    mongo.db.contacts.insert_one({'name':
-    name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zip': address['zip']}})
+    mongo.db.contacts.insert_one({'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}})
     print(name)
     lcontacts = mongo.db.contacts.find()
     formatContactList = map(formatContact, lcontacts)
@@ -63,20 +64,21 @@ def addcontact():
 
 @app.route('/deletecontact', methods=['POST'])
 def deletecontact():
-    name = request.json['name']
-    mongo.db.contacts.delete
+    id = request.json['id']
+    mongo.db.contacts.delete_one({'_id': ObjectId(id)})
     lcontacts = mongo.db.contacts.find()
     formatContactList = map(formatContact, lcontacts)
     return jsonify(list(formatContactList))
 
 @app.route('/updatecontact', methods=['POST'])
 def updatecontact():
+    id = request.json['id']
     name = request.json['name']
     phone = request.json['phone']
     company = request.json['company']
     email = request.json['email']
     address = request.json['address']
-    mongo.db.contacts.update_one({'name': name}, {'$set': {'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zip': address['zip']}}})
+    mongo.db.contacts.update_one({'_id': ObjectId(id)}, {'$set': {'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}}})
     lcontacts = mongo.db.contacts.find()
     formatContactList = map(formatContact, lcontacts)
     return jsonify(list(formatContactList))

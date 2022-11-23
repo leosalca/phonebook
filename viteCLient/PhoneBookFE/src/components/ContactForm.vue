@@ -2,11 +2,9 @@
 import { defineComponent, ref, computed } from 'vue'
 import CFBaseInputVue from './CFBaseInput.vue'
 import { useVuelidate } from '@vuelidate/core'
-import { useFetchContacts } from '../composables/useFetchContacts'
-import { required, minLength, email, requiredIf, helpers } from '@vuelidate/validators'
-import { Contact } from '../types/contact'
+import { required, minLength, email } from '@vuelidate/validators'
+import { Contact, Address } from '../types/contact'
 import {  useRouter } from 'vue-router'
-import { onMounted } from 'vue'
 import { useContactStore } from '../stores/useContactStore'
 
 
@@ -17,23 +15,30 @@ export default defineComponent({
         
         // store instance
         const store = useContactStore()
+
+        const editContact = store.editCurrentContact
+
+        const formMode = store.formMode
         
         const router = useRouter()
         const formValue = ref({
-            name: '',
-            email: '',
-            phone: '',
-            company: '',
+            name: editContact.name||'',
+            email: editContact.email||'',
+            phone: editContact.phone||'',
+            company: editContact.company||'',
             address: {
-                street: '',
-                city: '',
-                state: '',
-                zip: '',
-                country: ''
+                street: editContact.address?.street||'',
+                city: editContact.address?.city||'',
+                zipcode: editContact.address?.zipcode||'',
+                state: editContact.address?.state||'',
+                country: editContact.address?.country||'',
             },
-            notes: ''
+            id: editContact.id ||''
         })
         
+        console.log('edit contact', editContact)
+        //assign edit contact to form value
+
         const uspsVerification = ref(false)
 
         const rules = computed(() => ({
@@ -61,18 +66,14 @@ export default defineComponent({
                 state: {
                     required
                 },
-                zip: {
+                zipcode: {
                     minLength: minLength(5),
                     required
                 },
                 country: {
                     required
                 }
-            },
-            notes: {
-                required
             }
-        
         }))
 
         const v$ = useVuelidate(rules, formValue)
@@ -87,29 +88,42 @@ export default defineComponent({
             console.log(v$.value)
             if (isFormCorrect) {
                 console.log('Form is valid')
-                
                 // Submit form to backend
                 if (isUSPSValid) {
-                    fetch("http://127.0.0.1:5000/addcontact", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
+                    if (formMode === 'add'){
+                        fetch("http://127.0.0.1:5000/addcontact", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
 
-                    },
-                    body: jsonData
-                    })
-                    .then(response => response.json())
-                    .then(data => {                    
-                        console.log('Response from backend after post', data)
-                        store.setContacts(data)
-                    })
+                        },
+                        body: jsonData
+                        })
+                        .then(response => response.json())
+                        .then(data => {                    
+                            console.log('Response from backend after post', data)
+                            store.setContacts(data)
+                        })
+                    } else if (formMode === 'edit') {
+                        fetch("http://127.0.0.1:5000/updatecontact", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+
+                        },
+                        body: jsonData
+                        })
+                        .then(response => response.json())
+                        .then(data => {                    
+                            console.log('Response from backend after post', data)
+                            store.setContacts(data)
+                        })
+                    }
                 } else {
                     console.log('USPS verification failed')
                     alert('USPS verification failed, pleasy try again')
                     return
                 }
-                
-
             } else {
                 console.log('Form is invalid')
                 alert('Form is invalid')
@@ -145,7 +159,8 @@ export default defineComponent({
             verifyWithUsps,
             formValue,
             v$,
-            uspsVerification
+            uspsVerification,
+            formMode
         }
     },
     components: {
@@ -216,13 +231,13 @@ export default defineComponent({
         <div class="zipContainer">
             <CFBaseInputVue
             label="Zip"
-            v-model="formValue.address.zip"
+            v-model="formValue.address.zipcode"
             type="text"
-            @blur="v$.address.zip.$touch()"
+            @blur="v$.address.zipcode.$touch()"
             />
-            <button v-if="v$.address.zip.$error === false && v$.address.zip.$dirty" class="verifyButton" @click.prevent="verifyWithUsps(formValue.address.zip)">Verify</button>
+            <button v-if="v$.address.zipcode.$error === false && v$.address.zipcode.$dirty" class="verifyButton" @click.prevent="verifyWithUsps(formValue.address.zipcode)">Verify</button>
         </div>
-        <div v-if="v$.address.zip.$error" class="errorMsg" v-for="error of v$.address.zip.$errors" :key="error.$uid">
+        <div v-if="v$.address.zipcode.$error" class="errorMsg" v-for="error of v$.address.zipcode.$errors" :key="error.$uid">
             {{error.$message}}
             <div v-if="!uspsVerification" class="verMsg">Once typed, please verify zipcode with USPS</div>
         </div>
@@ -235,16 +250,10 @@ export default defineComponent({
         />
         <div v-if="v$.address.country.$error" class="errorMsg">Country field has an error</div>
 
-        <CFBaseInputVue
-            label="Notes"
-            v-model="formValue.notes"
-            type="text"
-            @blur="v$.notes.$touch()"
-        />
-        <div v-if="v$.notes.$error" class="errorMsg">Notes field has an error</div>
-
-        <button type="submit">Submit</button>
+        <button v-if="formMode === 'add'" type="submit" class="submitButton">Save</button>
+        <button v-if="formMode === 'edit'" type="submit" class="submitButton">Update</button>
     </form>
+   
 </template>
 
 <style scoped>
@@ -260,7 +269,6 @@ export default defineComponent({
     height: 35px;
     align-self: flex-end;
 }
-
 .contactForm {
     display: flex;
     flex-direction: column;
@@ -268,7 +276,6 @@ export default defineComponent({
     width: 80%;
     margin: 0 auto;
 }
-
 .zipContainer {
     display: flex;
     flex-direction: row;
@@ -277,5 +284,30 @@ export default defineComponent({
     align-self: center;
     margin: 0.5rem 0.5rem;
 }
- 
+.errorMsg {
+  color: red;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 4rem;
+}
+.verMsg {
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin: auto;
+}
+.submitButton {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 1rem;
+    cursor: pointer;
+    height: 35px;
+    width: 40%;
+    align-self: center;
+}
 </style>

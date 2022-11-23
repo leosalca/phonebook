@@ -53,31 +53,11 @@
   color: #f9f9f9;
 }
 
-.errorMsg {
-  color: red;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-left: 4rem;
-}
-.verMsg {
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-left: 4rem;
-}
-
 .addButton {
   color: white;
 }
 .addButton:hover {
   color: #36ad6a
-}
-
-
-.contactItem {
-  border : 1px solid #535bf2;
-  
-  padding: 1rem;
 }
 
 .contactList {

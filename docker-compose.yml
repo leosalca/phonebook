@@ -1,12 +1,16 @@
-version: "0.0.1.RELEASE"
+version: "3"
 services:
   phonebookfe:
-    image: phonebookfe
+    build: ./viteclient/phonebookfe
+    container_name: phonebookfe
+    restart: always
     ports:
       - 3000:3000
     depends_on:
       - phonebookbe
   phonebookbe:
-    image: phonebookbe
+    build: ./server
+    container_name: phonebookbe
+    restart: always
     ports:
       - 5000:5000
