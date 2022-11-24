@@ -1,12 +1,16 @@
 # Vue-Flask-MongoDB Phonebook Project
-A Vue front-end and Flask back-end app
+A Vue front-end and Flask back-end app. Simple
 
 ## Technologies used in the front-end
-JavaScript
-Vue.js
-Node.js
+- JavaScript
+- TypeScript
+- Vue.js
+  - Pinia
+  - Vuelidate
+  - Naive UI Components
+- Node.js
 
 ## Technologies used in the back-end
-Python
-Flask
-MongoDB
+- Python
+- Flask
+- MongoDB

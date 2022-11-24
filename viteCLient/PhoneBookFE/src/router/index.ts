@@ -2,8 +2,8 @@ import { createRouter,  } from "vue-router";
 import { createWebHistory } from "vue-router";
 import Contacts from "../views/Contacts.vue";
 import AddContact from "../views/AddContact.vue";
-import About from "../views/About.vue";
 
+// routes
 const router = createRouter({
     history: createWebHistory(),
     routes: [

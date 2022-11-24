@@ -1,27 +1,27 @@
 <script lang='ts'>
     import ContactForm from '../components/ContactForm.vue';
-    import { defineComponent, ref } from 'vue';
+    import { defineComponent } from 'vue';
     export default defineComponent({
         name: 'AddContact',
         setup() {
             return {
                 ContactForm
-            }
+            };
         },
         components: {
             ContactForm
         }
-    })
+    });
 </script>
 
 <template>
-    <div class="addContact">
+    <div class="addContactForm">
         <ContactForm />
     </div>
 </template>
 
 <style scoped>
-    .addContact {
+    .addContactForm {
         display: flex;
         justify-content: center;
         align-items: center;

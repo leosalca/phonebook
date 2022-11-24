@@ -6,7 +6,7 @@ interface Contact {
     address?: Address;
     company?: string;
     notes?: string;
-}
+};
 
 interface Address {
     street?: string;
@@ -14,7 +14,7 @@ interface Address {
     state?: string;
     zipcode?: string;
     country?: string;
-}
+};
 
 
 
