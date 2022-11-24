@@ -18,7 +18,7 @@ app.config['MONGO_URI'] = 'mongodb+srv://leosalca:' + mdbPW + '@phonebookapp.vbm
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # Load MongoDB
-mongo = PyMongo(app)
+mongo = PyMongo(app, app.config['MONGO_URI'])
 
 # Format contacts function used in multiple routes
 def formatContact(contact):
@@ -31,7 +31,7 @@ def formatContact(contact):
             'company': contact['company']
         }
 
-#XML USPS root
+# XML USPS root
 uspsRoot = ET.Element('CityStateLookupRequest', {'USERID': '249LSCDE3365'})
 zipXML = ET.SubElement(uspsRoot, 'ZipCode')
 zip5 = ET.SubElement(zipXML, 'Zip5')
