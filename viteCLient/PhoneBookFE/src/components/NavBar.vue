@@ -1,27 +1,26 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { PersonAddSharp } from '@vicons/material'
-import { NButton, NIcon } from 'naive-ui'
-import {  useRouter } from 'vue-router'
-import { useContactStore } from '../stores/useContactStore'
+import { defineComponent } from 'vue';
+import { PersonAddSharp } from '@vicons/material';
+import { NButton, NIcon } from 'naive-ui';
+import {  useRouter } from 'vue-router';
+import { useContactStore } from '../stores/useContactStore';
 
 
 export default defineComponent({
     name: 'NavBar',
     setup() {
-        const router = useRouter()
+        // define router to navigate to different routes from NavBar
+        const router = useRouter();
+        // define store to access states and actions from store
+        const store = useContactStore();
 
-        const store = useContactStore()
-
+        // function will navigate to add contact page, clear the contact state and set the mode to add
         const handleAddContact = async () => {
-            store.clearEditContact()
-            store.setFormMode('add')
-            await router.push('/add')
-
-        }
-        return {
-            handleAddContact 
-        }
+            store.clearEditContact();
+            store.setFormMode('add');
+            await router.push('/add');
+        };
+        return { handleAddContact };
     },
     components: {
         NButton,
@@ -41,3 +40,16 @@ export default defineComponent({
         </n-button>
     </nav>
 </template>
+
+<style scoped>
+.navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  height: 3rem;
+  background-color: #535bf2;
+  margin-bottom: 1rem;
+}
+</style>

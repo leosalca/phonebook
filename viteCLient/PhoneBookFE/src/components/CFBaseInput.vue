@@ -1,3 +1,4 @@
+<!-- Reusable component used in ContactForm -->
 <template>
     <div class="baseInput">
         <label>{{ label }}</label>
@@ -12,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, defineEmits } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     props: {
@@ -28,6 +29,30 @@ export default defineComponent({
             type: Array,
         }
     },
-})
+});
 </script>
+
+<style scoped>
+.baseInput {
+  width: 80%;
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+}
+.baseInput input {
+  min-width: 50%;
+  padding: 0.5rem;
+  margin: 0.5rem 0.5rem;
+  border: 1px solid #535bf2;
+  border-radius: 0.25rem;
+  background-color: #f9f9f9;
+  color: #213547;
+}
+.baseInput label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f9f9f9;
+}
+
+</style>
 

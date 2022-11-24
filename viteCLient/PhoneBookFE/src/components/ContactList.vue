@@ -1,21 +1,23 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
-import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace, NButton } from 'naive-ui'
-import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled, DeleteFilled } from '@vicons/material'
-import { useContactStore } from '../stores/useContactStore'
-import type { Contact } from '../types/contact'
-import { useRouter } from 'vue-router'
+import { defineComponent, ref } from 'vue';
+import { NList, NListItem, NThing, NAvatar, NIcon, NDivider, NSpace, NButton } from 'naive-ui';
+import { PersonFilled, LocalPhoneFilled, AlternateEmailFilled, HouseFilled, DeleteFilled } from '@vicons/material';
+import { useContactStore } from '../stores/useContactStore';
+import type { Contact } from '../types/contact';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
     name: 'ContactList',
     setup() {
 
-        const store = useContactStore()
-        const router = useRouter()
+        // define router and store to navigate to different routes and access states and actions from store
+        const store = useContactStore();
+        const router = useRouter();
 
+        // function to delete contact. User still needs to confirm the deletion with the alert
         const handleDelete = async (contact: Contact) => {
-            console.log('delete contact', contact)
-            // confirm delete with popup
+            console.log('delete contact', contact);
+            // confirm delete with alert
             if(confirm(`Are you sure you want to delete ${contact.name}?`)) {
                 fetch('http://localhost:5000/deletecontact', {
                     method: 'POST',
@@ -26,30 +28,31 @@ export default defineComponent({
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Response from backend after post', data)
-                    store.setContacts(data)
-                })
-            }
-        }
-
+                    console.log('Response from backend after post', data);
+                    store.setContacts(data);
+                });
+            };
+        };
+        /* function to edit contact. Will navigate to edit page and set the mode to edit and 
+        the contact state to the contact to be edited */
         const handleEdit = async (contact: Contact) => {
-            store.editContact(contact)
-            store.setFormMode('edit')
-            await router.push('/add')
+            store.editContact(contact);
+            store.setFormMode('edit');
+            await router.push('/add');
         }
-
+        // fetch contacts from backend, which comes from MongoDB
         fetch('http://127.0.0.1:5000/getcontacts')
             .then(res => res.json())
             .then(data => {
-                store.setContacts(data)
-                console.log(data)
-            })
+                store.setContacts(data);
+                console.log(data);
+            });
         
         return {
             store,
             handleDelete,
             handleEdit
-        }
+        };
     },
     components: {
         NList,
@@ -85,6 +88,7 @@ export default defineComponent({
                     {{ contact.name }}
                 </template>
                 <template #header-extra>
+                    <!-- Action buttons -->
                     <n-button size="small" class="actionButtonMargin" type="info" @click="handleEdit(contact)" dashed>Edit</n-button>
                     <n-button size="small" class="actionButtonMargin" type="error" @click="handleDelete(contact)">Delete</n-button>
                 </template>
@@ -127,6 +131,5 @@ export default defineComponent({
 .actionButtonMargin {
     margin-right: 0.5rem;
 }
-
 
 </style>
