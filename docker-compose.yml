@@ -13,4 +13,4 @@ services:
     container_name: phonebookbe
     restart: always
     ports:
-      - 8000:5000
+      - 8000:8000
