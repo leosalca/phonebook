@@ -19,7 +19,7 @@ export default defineComponent({
             console.log('delete contact', contact);
             // confirm delete with alert
             if(confirm(`Are you sure you want to delete ${contact.name}?`)) {
-                fetch('http://localhost:5000/deletecontact', {
+                fetch('http://127.0.0.1:8000/deletecontact', {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json'
@@ -41,7 +41,7 @@ export default defineComponent({
             await router.push('/add');
         }
         // fetch contacts from backend, which comes from MongoDB
-        fetch('http://127.0.0.1:5000/getcontacts')
+        fetch('http://127.0.0.1:8000/getcontacts')
             .then(res => res.json())
             .then(data => {
                 store.setContacts(data);

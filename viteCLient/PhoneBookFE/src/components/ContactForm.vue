@@ -91,7 +91,7 @@ export default defineComponent({
                     now check if its a new contact or editing a current one.
                     Send to the appropriate route.*/
                     if (formMode === 'add'){
-                        fetch("http://127.0.0.1:5000/addcontact", {
+                        fetch("http://127.0.0.1:8000/addcontact", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -105,7 +105,7 @@ export default defineComponent({
                             store.setContacts(data);
                         });
                     } else if (formMode === 'edit') {
-                        fetch("http://127.0.0.1:5000/updatecontact", {
+                        fetch("http://127.0.0.1:8000/updatecontact", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -134,7 +134,7 @@ export default defineComponent({
         const verifyWithUsps = async (zip: String) => {
             console.log('Verify with USPS');
             console.log(zip);
-            fetch("http://127.0.0.1:5000/verifyzip", {
+            fetch("http://127.0.0.1:8000/verifyzip", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
