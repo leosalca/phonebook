@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_pymongo import PyMongo
+from pymongo import MongoClient
 import json as JSON
 import xml.etree.ElementTree as ET
 import urllib.request
@@ -10,15 +11,24 @@ from bson.objectid import ObjectId
 DEBUG = True
 
 # instantiate the app, attach mongo URI to config. MongoDB PW needs to be in .env file
-mdbPW = 'sagRyz-nizqu1-metzuw'
 app = Flask(__name__)
-app.config['MONGO_URI'] = 'mongodb+srv://leosalca:' + mdbPW + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority'
+
+# app.config['MONGO_URI'] = 'mongodb://leosalca:' + mdbPW + '@ac-fvpiouw-shard-00-00.vbmmd49.mongodb.net:27017,ac-fvpiouw-shard-00-01.vbmmd49.mongodb.net:27017,ac-fvpiouw-shard-00-02.vbmmd49.mongodb.net:27017/?ssl=true&replicaSet=atlas-zfh5kr-shard-0&authSource=admin&retryWrites=true&w=majority'
+# app.config['MONGO_URI'] = 'mongodb+srv://leosalca:' + 'sagRyz-nizqu1-metzuw' + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority'
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # Load MongoDB
-mongo = PyMongo(app, app.config['MONGO_URI'])
+# mongo = PyMongo(app, app.config['MONGO_URI'])
+mongo = MongoClient('mongodb+srv://leosalca:' + 'sagRyz-nizqu1-metzuw' + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority')
+db = mongo.phone_book
+contacts = db.contacts
+# Checking all contacts
+print('MongoDB connected')
+for contact in contacts.find():
+    print(contact)
+
 
 # Format contacts function used in multiple routes
 def formatContact(contact):
@@ -45,8 +55,7 @@ def ping_pong():
 
 @app.route('/getcontacts', methods=['GET'])
 def getcontacts():
-    lcontacts = mongo.db.contacts.find()
-    formatContactList = map(formatContact, lcontacts)
+    formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/addcontact', methods=['POST'])
@@ -56,18 +65,16 @@ def addcontact():
     company = request.json['company']
     email = request.json['email']
     address = request.json['address']
-    mongo.db.contacts.insert_one({'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}})
+    contacts.insert_one({'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}})
     print(name)
-    lcontacts = mongo.db.contacts.find()
-    formatContactList = map(formatContact, lcontacts)
+    formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/deletecontact', methods=['POST'])
 def deletecontact():
     id = request.json['id']
-    mongo.db.contacts.delete_one({'_id': ObjectId(id)})
-    lcontacts = mongo.db.contacts.find()
-    formatContactList = map(formatContact, lcontacts)
+    contacts.delete_one({'_id': ObjectId(id)})
+    formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/updatecontact', methods=['POST'])
@@ -78,9 +85,8 @@ def updatecontact():
     company = request.json['company']
     email = request.json['email']
     address = request.json['address']
-    mongo.db.contacts.update_one({'_id': ObjectId(id)}, {'$set': {'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}}})
-    lcontacts = mongo.db.contacts.find()
-    formatContactList = map(formatContact, lcontacts)
+    contacts.update_one({'_id': ObjectId(id)}, {'$set': {'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}}})
+    formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/verifyzip', methods=['POST'])
