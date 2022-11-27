@@ -1,8 +1,9 @@
 FROM python:3.9-alpine
+# Set the working directory to /app
 WORKDIR /app
+# Copy the current directory contents into the container at /app
 COPY . /app
+# Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
-# EXPOSE 5000
-
 # Binding gunicon to python app, and serving it on port 5000
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "app:app"]
