@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, reactive } from 'vue';
 import CFBaseInputVue from './CFBaseInput.vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, email } from '@vuelidate/validators';
@@ -16,7 +16,7 @@ export default defineComponent({
         // store instance to access states and actions from store
         const store = useContactStore();
         // define contact needed to be edited. Value comes from store.
-        const editContact = store.editCurrentContact;
+        const editContact =  store.editCurrentContact;
         // define formMode. Value comes from store and it can be 'add' or 'edit'. Button shown will change according to this value.
         const formMode = store.formMode;
         /* define router to navigate to different routes from ContactForm. 
@@ -173,7 +173,7 @@ export default defineComponent({
 or when the form is submitted. If there are errors, they are shown below the input field. 
 The value here is binded to the formValue reactive value-->
 <template>
-    <form class="contactForm" @submit.prevent="onSubmit(formValue)">
+    <form ref="contactForm" class="contactForm" @submit.prevent="onSubmit(formValue)">
         <CFBaseInputVue
             label="Name"
             v-model="formValue.name"
