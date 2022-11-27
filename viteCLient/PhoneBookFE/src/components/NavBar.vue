@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { PersonAddSharp } from '@vicons/material';
+import { PersonAddSharp, CancelFilled } from '@vicons/material';
 import { NButton, NIcon } from 'naive-ui';
 import {  useRouter } from 'vue-router';
 import { useContactStore } from '../stores/useContactStore';
@@ -18,14 +18,23 @@ export default defineComponent({
         const handleAddContact = async () => {
             store.clearEditContact();
             store.setFormMode('add');
+            console.log(store.editCurrentContact);
             await router.push('/add');
+            console.log('handleAdd clicked')
         };
-        return { handleAddContact };
+
+        const handleCancel = async () => {
+            store.clearEditContact();
+            store.setFormMode('add');
+            await router.push('/');
+        };
+        return { handleAddContact, handleCancel ,store };
     },
     components: {
         NButton,
         NIcon,
-        PersonAddSharp
+        PersonAddSharp,
+        CancelFilled
     }
 })
 
@@ -33,11 +42,16 @@ export default defineComponent({
 <template>
     <nav class="navigation">
         <router-link to="/">Contacts</router-link>
-        <n-button class="addButton" circle ghost @click="handleAddContact()" >
-            <template #icon>
-                <n-icon><PersonAddSharp/></n-icon>
-            </template>
-        </n-button>
+        <div>
+            <n-button v-if="store.formMode === 'edit' " class="cancelEditButton" circle @click="handleCancel()">
+                    <n-icon><CancelFilled /></n-icon>
+            </n-button>
+            <n-button v-if="store.formMode === 'add'" class="addButton" circle ghost @click="handleAddContact()" >
+                <template #icon>
+                    <n-icon><PersonAddSharp/></n-icon>
+                </template>
+            </n-button>
+        </div>
     </nav>
 </template>
 
@@ -51,5 +65,19 @@ export default defineComponent({
   height: 3rem;
   background-color: #535bf2;
   margin-bottom: 1rem;
+}
+
+.addButton {
+  color: white;
+}
+.addButton:hover {
+  color: #36ad6a
+}
+.cancelEditButton {
+    color: red;
+}
+.cancelEditButton:hover {
+    color: white;
+    background-color: red;
 }
 </style>

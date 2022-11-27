@@ -6,7 +6,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #fff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -22,13 +22,6 @@
   padding: 1rem;
   background-color: #535bf2;
   border-radius: 5px;
-}
-
-.addButton {
-  color: white;
-}
-.addButton:hover {
-  color: #36ad6a
 }
 
 .contactList {
