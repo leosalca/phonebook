@@ -6,6 +6,10 @@ import json as JSON
 import xml.etree.ElementTree as ET
 import urllib.request
 from bson.objectid import ObjectId
+import dns.resolver
+
+dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
+dns.resolver.default_resolver.nameservers=['8.8.8.8']
 
 # configuration
 DEBUG = True

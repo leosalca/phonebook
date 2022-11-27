@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
-    "start": "serve dist"
+    "start": "serve dist --config ../serve.json"
   },
   "dependencies": {
     "@types/lodash": "^4.14.189",
