@@ -8,6 +8,7 @@ import urllib.request
 from bson.objectid import ObjectId
 import dns.resolver
 
+# chnaged default dns resolver for pymongo to google's. Default for certain macs resolver was not working
 dns.resolver.default_resolver=dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers=['8.8.8.8']
 
