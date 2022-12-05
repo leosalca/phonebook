@@ -128,6 +128,7 @@ export default defineComponent({
                 alert('Form is invalid');
                 return
             };
+            store.setFormMode('add');
             await router.push('/'); // navigate to home page after form is submitted
         };
         // function to validate zipcode using USPS API

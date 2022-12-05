@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_pymongo import PyMongo
+from dotenv import load_dotenv
+import os
 from pymongo import MongoClient
 import json as JSON
 import xml.etree.ElementTree as ET
