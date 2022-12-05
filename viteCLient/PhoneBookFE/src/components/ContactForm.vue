@@ -3,8 +3,8 @@ import { defineComponent, ref, computed, reactive } from 'vue';
 import CFBaseInputVue from './CFBaseInput.vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, email } from '@vuelidate/validators';
-import { Contact, Address } from '../types/contact';
-import {  useRouter } from 'vue-router';
+import { Contact } from '../types/contact';
+import { useRouter } from 'vue-router';
 import { useContactStore } from '../stores/useContactStore';
 
 
@@ -49,7 +49,7 @@ export default defineComponent({
         const rules = computed(() => ({
             name: {
                 required,
-                minLength: minLength(2), //add a custom message
+                minLength: minLength(2),
             },
             email: {
                 email
