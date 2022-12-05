@@ -14,7 +14,9 @@ dist-ssr
 .env
 .gitignore
 server/.env
-server/venv/
+server/env/
+
+
 
 
 # Editor directories and files
