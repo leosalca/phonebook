@@ -9,8 +9,13 @@ services:
     depends_on:
       - phonebookbe
   phonebookbe:
+    env_file: .env
     build: ./server
     container_name: phonebookbe
+    environment:
+      MONGODB_USER: ${MONGODB_USER}
+      MONGODB_PW: ${MONGODB_PW}
+      USPS_USERID: ${USPS_USERID}
     restart: always
     ports:
       - 8000:8000

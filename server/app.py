@@ -16,6 +16,9 @@ dns.resolver.default_resolver.nameservers=['8.8.8.8']
 # configuration
 DEBUG = True
 
+# .env file
+load_dotenv()
+
 # instantiate the app, attach mongo URI to config. MongoDB PW needs to be in .env file
 app = Flask(__name__)
 
@@ -26,8 +29,7 @@ app = Flask(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # Load MongoDB
-# mongo = PyMongo(app, app.config['MONGO_URI'])
-mongo = MongoClient('mongodb+srv://leosalca:' + 'sagRyz-nizqu1-metzuw' + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority')
+mongo = MongoClient('mongodb+srv://' + os.getenv('MONGODB_USER') + ':' + os.getenv('MONGODB_PW') + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority')
 db = mongo.phone_book
 contacts = db.contacts
 # Checking all contacts
@@ -48,7 +50,7 @@ def formatContact(contact):
         }
 
 # XML USPS root
-uspsRoot = ET.Element('CityStateLookupRequest', {'USERID': '249LSCDE3365'})
+uspsRoot = ET.Element('CityStateLookupRequest', {'USERID': os.getenv('USPS_USERID')})
 zipXML = ET.SubElement(uspsRoot, 'ZipCode')
 zip5 = ET.SubElement(zipXML, 'Zip5')
 zipTree = ET.ElementTree(uspsRoot)
