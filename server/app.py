@@ -3,7 +3,6 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
-import json as JSON
 import xml.etree.ElementTree as ET
 import urllib.request
 from bson.objectid import ObjectId
@@ -16,43 +15,44 @@ dns.resolver.default_resolver.nameservers=['8.8.8.8']
 # configuration
 DEBUG = True
 
+# Load .env file in root directory
+load_dotenv()
+
 # instantiate the app, attach mongo URI to config. MongoDB PW needs to be in .env file
 app = Flask(__name__)
-
-# app.config['MONGO_URI'] = 'mongodb://leosalca:' + mdbPW + '@ac-fvpiouw-shard-00-00.vbmmd49.mongodb.net:27017,ac-fvpiouw-shard-00-01.vbmmd49.mongodb.net:27017,ac-fvpiouw-shard-00-02.vbmmd49.mongodb.net:27017/?ssl=true&replicaSet=atlas-zfh5kr-shard-0&authSource=admin&retryWrites=true&w=majority'
-# app.config['MONGO_URI'] = 'mongodb+srv://leosalca:' + 'sagRyz-nizqu1-metzuw' + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority'
 
 # enable CORS
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # Load MongoDB
-# mongo = PyMongo(app, app.config['MONGO_URI'])
-mongo = MongoClient('mongodb+srv://leosalca:' + 'sagRyz-nizqu1-metzuw' + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority')
+mongo = MongoClient('mongodb+srv://' + os.getenv('MONGODB_USER') + ':' + os.getenv('MONGODB_PW') + '@phonebookapp.vbmmd49.mongodb.net/phone_book?retryWrites=true&w=majority')
 db = mongo.phone_book
 contacts = db.contacts
 # Checking all contacts
-print('MongoDB connected')
+print('MongoDB Contacts:')
 for contact in contacts.find():
     print(contact)
 
 
 # Format contacts function used in multiple routes
 def formatContact(contact):
-        return {
-            'id': str(contact['_id']),
-            'name': contact['name'],
-            'phone': contact['phone'],
-            'email': contact['email'],
-            'address': contact['address'],
-            'company': contact['company']
-        }
+    return {
+        'id': str(contact['_id']),
+        'name': contact['name'],
+        'phone': contact['phone'],
+        'email': contact['email'],
+        'address': contact['address'],
+        'company': contact['company']
+    }
 
-# XML USPS root
-uspsRoot = ET.Element('CityStateLookupRequest', {'USERID': '249LSCDE3365'})
-zipXML = ET.SubElement(uspsRoot, 'ZipCode')
-zip5 = ET.SubElement(zipXML, 'Zip5')
-zipTree = ET.ElementTree(uspsRoot)
-
+def formatRequestJSON(request):
+    return {
+        'name': request.json['name'],
+        'phone': request.json['phone'],
+        'email': request.json['email'],
+        'address': request.json['address'],
+        'company': request.json['company']
+    }
 
 # sanity check route
 @app.route('/ping', methods=['GET'])
@@ -60,44 +60,48 @@ def ping_pong():
     return jsonify('pong!')
 
 @app.route('/getcontacts', methods=['GET'])
-def getcontacts():
+def getContacts():
     formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/addcontact', methods=['POST'])
-def addcontact():
-    name = request.json['name']
-    phone = request.json['phone']
-    company = request.json['company']
-    email = request.json['email']
-    address = request.json['address']
-    contacts.insert_one({'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}})
-    print(name)
-    formatContactList = map(formatContact, contacts.find())
-    return jsonify(list(formatContactList))
+def addContact():
+    reqContact = formatRequestJSON(request)
+    contacts.insert_one(reqContact)
+    formattedContactList = map(formatContact, contacts.find())
+    return jsonify(list(formattedContactList))
 
 @app.route('/deletecontact', methods=['POST'])
-def deletecontact():
-    id = request.json['id']
-    contacts.delete_one({'_id': ObjectId(id)})
+def deleteContact():
+    contactobjId = request.json['id']
+    contacts.delete_one({'_id': ObjectId(contactobjId)})
     formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/updatecontact', methods=['POST'])
-def updatecontact():
-    id = request.json['id']
-    name = request.json['name']
-    phone = request.json['phone']
-    company = request.json['company']
-    email = request.json['email']
-    address = request.json['address']
-    contacts.update_one({'_id': ObjectId(id)}, {'$set': {'name':name, 'phone': phone, 'company': company, 'email': email, 'address': {'street': address['street'], 'city': address['city'], 'state': address['state'], 'zipcode': address['zipcode'], 'country': address['country']}}})
+def updateContact():
+    # get contact object id from request, to be used in update query
+    contactobjId = request.json['id']
+    # format form data MongoDB object
+    reqContact = formatRequestJSON(request)
+    # update MongoDB contact using 'contacts' collection
+    contacts.update_one({'_id': ObjectId(contactobjId)}, {'$set': reqContact})
     formatContactList = map(formatContact, contacts.find())
     return jsonify(list(formatContactList))
 
 @app.route('/verifyzip', methods=['POST'])
-def verifyzip():
+def verifyZip():
+    # XML USPS root
+    uspsRoot = ET.Element('CityStateLookupRequest', {'USERID': os.getenv('USPS_USERID')})
+    # XML USPS child
+    zipXML = ET.SubElement(uspsRoot, 'ZipCode')
+    # XML USPS child where zip code from request is inserted
+    zip5 = ET.SubElement(zipXML, 'Zip5')
+    # create XML tree
+    zipTree = ET.ElementTree(uspsRoot)
+    # get zip code from request
     zip = request.json['zip']
+    # insert zip code into XML
     zip5.text = zip
     # verify xml in console
     ET.dump(zipTree)
@@ -119,7 +123,6 @@ def verifyzip():
                     
         else:
             return jsonify({'error': 'Invalid Zip Code'})
-
 
 if __name__ == '__main__':
     app.run()
