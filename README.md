@@ -24,7 +24,7 @@ Built with a **Vue** front-end and a **Flask** back-end. Integrated with USPS We
 ## To run the app:
 1. Clone the repo, then navigate to the root directory */phonebook*.
 > *cd phonebook*
-2. Make sure an .env file is present with the following varaibles:
+2. Make sure an .env file is present with the following variables:
 ```
 MONGODB_USER = ''
 MONGODB_PW = ''
